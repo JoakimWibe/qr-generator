@@ -1,0 +1,34 @@
+# Ignore build artifacts and output directories
+bin/
+obj/
+
+# Ignore the NuGet package cache for any project
+**/.nuget/
+
+# Ignore Visual Studio-specific files
+.vs/
+.vscode/
+.idea/
+
+# User-specific files for Visual Studio
+*.user
+*.userosscache
+*.suo
+*.userprefs
+
+# ASP.NET Core-specific temporary files
+App_Data/
+
+# Ignore logs
+*.log
+
+# Ignore Entity Framework Core migrations folder
+Migrations/
+
+# Ignore other IDE-specific files
+*.swp
+*.swo
+
+# Ignore Windows system files
+Thumbs.db
+Desktop.ini
