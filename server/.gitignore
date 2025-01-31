@@ -1,0 +1,49 @@
+# Ignore Visual Studio and Rider specific files
+.vs/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Ignore build and bin/obj folders
+**/bin/
+**/obj/
+
+# Ignore NuGet packages
+*.nupkg
+packages/
+
+# Ignore temporary and cache files
+*.log
+*.tmp
+*.cache
+*.config
+*.csproj.user
+
+# Ignore generated files
+Generated/
+*.g.cs
+*.g.i.cs
+
+# Ignore secrets and credentials
+secrets.json
+appsettings.Development.json
+
+# Ignore node_modules if frontend is included
+node_modules/
+
+# Ignore coverage reports
+coverage/
+*.coverlet
+
+# Ignore Docker files
+**/[Dd]ocker*
+**/docker-compose.override.yml
+**/docker-compose.yml.save
+**/docker-compose.override.yml.save
+**/docker-build-cache/
+**/docker-logs/
+
+# Ignore JetBrains Rider workspace.xml
+**/.idea/workspace.xml

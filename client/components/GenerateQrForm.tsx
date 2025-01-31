@@ -1,11 +1,12 @@
 "use client"
 
 import { z } from "zod"
+import axios from "axios"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
 import {
-  Form,
+  Form, 
   FormControl,
   FormField,
   FormItem,
@@ -13,22 +14,35 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-
+import { useQrCodeStore } from '@/context/useQrCodeStore';
 
 const formSchema = z.object({
   url: z.string().url("Please provide a valid URL"),
 })
 
 const GenerateQrForm = () => {
+  const {setImageUrl} = useQrCodeStore();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       url: "",
     },
   })
- 
+
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values.url)
+    try {
+      const response = await axios.get(process.env.NEXT_PUBLIC_QRGEN_URL || "", {
+        params: { Url: values.url },
+        responseType: "blob", 
+      })
+      
+      const imageUrl = URL.createObjectURL(response.data)
+      setImageUrl(imageUrl)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return (
@@ -49,7 +63,7 @@ const GenerateQrForm = () => {
         />
         <Button type="submit">Generate</Button>
       </form>
-  </Form>
+    </Form>
   )
 }
 

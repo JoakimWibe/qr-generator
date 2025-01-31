@@ -1,3 +1,4 @@
+import GeneratedQr from '@/components/GeneratedQr';
 import GenerateQrForm from '@/components/GenerateQrForm';
 
 export default function Home() {
@@ -6,6 +7,9 @@ export default function Home() {
       <h1>Generate a custom QR code!</h1>
 
       <GenerateQrForm />
+
+      <GeneratedQr />
+
     </section>
   );
 }
