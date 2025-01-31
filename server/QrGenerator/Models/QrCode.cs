@@ -1,5 +1,4 @@
 namespace QrGenerator.Models;
-
 public class QrCode
 {
     public string Id { get; set; } = Guid.NewGuid().ToString();

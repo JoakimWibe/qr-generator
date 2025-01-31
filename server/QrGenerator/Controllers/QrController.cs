@@ -16,11 +16,11 @@ namespace QrGenerator.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<QrCode>>> GetQrCodes()
+        public async Task<ActionResult<IEnumerable<QrCode>>> GetQrCodesByUser(string userId)
         {
             if (_qrCodeRepository != null)
             {
-                return await _qrCodeRepository.GetAll();
+                return await _qrCodeRepository.GetAllByUser(userId);
             }
 
             return NotFound();

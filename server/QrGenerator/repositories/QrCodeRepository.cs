@@ -16,9 +16,11 @@ public class QrCodeRepository : IQrCodeRepository
         _qrGenerator = new QRCodeGenerator();
     }
 
-    public async Task<ActionResult<IEnumerable<QrCode>>> GetAll()
+    public async Task<ActionResult<IEnumerable<QrCode>>> GetAllByUser(string userId)
     {
-        return await _qrCodeContext.QrCode.ToListAsync();
+        return await _qrCodeContext.QrCode
+        .Where(qr => qr.UserId == userId)
+        .ToListAsync();
     }
 
     public async Task<QrCode> GetById(string id)
