@@ -14,14 +14,14 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { useQrCodeStore } from '@/context/useQrCodeStore';
+import { useQrContext } from '@/context/QrContext';
 
 const formSchema = z.object({
   url: z.string().url("Please provide a valid URL"),
 })
 
 const GenerateQrForm = () => {
-  const {setImageUrl} = useQrCodeStore();
+  const {setGeneratedImageUrl} = useQrContext();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -33,13 +33,14 @@ const GenerateQrForm = () => {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const response = await axios.get(process.env.NEXT_PUBLIC_QRGEN_URL || "", {
+      const response = await axios.get(process.env.NEXT_PUBLIC_QRGEN_URL + "/Qr/generate" || "", {
         params: { Url: values.url },
         responseType: "blob", 
       })
       
       const imageUrl = URL.createObjectURL(response.data)
-      setImageUrl(imageUrl)
+      setGeneratedImageUrl(imageUrl)
+
     } catch (error) {
       console.log(error)
     }

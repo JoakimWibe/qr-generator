@@ -18,12 +18,13 @@ public class QrCodeRepository : IQrCodeRepository
 
     public async Task<ActionResult<IEnumerable<QrCode>>> GetAllByUser(string userId)
     {
-        return await _qrCodeContext.QrCode
-        .Where(qr => qr.UserId == userId)
-        .ToListAsync();
+        var qrCodes = await _qrCodeContext.QrCode
+            .Where(qr => qr.UserId == userId)
+            .ToListAsync();
+        return new ActionResult<IEnumerable<QrCode>>(qrCodes);
     }
 
-    public async Task<QrCode> GetById(string id)
+    public async Task<QrCode?> GetById(string id)
     {
         return await _qrCodeContext.QrCode.FirstOrDefaultAsync(qrCode => qrCode.Id == id);
     }
@@ -35,33 +36,24 @@ public class QrCodeRepository : IQrCodeRepository
         return addQrCode.Entity;
     }
 
-    public void Delete(string id)
+    public async Task<bool> Delete(string id)
     {
-        var qrCode = _qrCodeContext.QrCode.Find(id);
+        var qrCode = await _qrCodeContext.QrCode.FindAsync(id);
 
         if (qrCode == null)
         {
-            return;
+            return false;
         }
 
         _qrCodeContext.QrCode.Remove(qrCode);
-        _qrCodeContext.SaveChanges();
+        await _qrCodeContext.SaveChangesAsync();
+        return true;
     }
 
     public byte[] GenerateQrCode(string url)
     {
-        try
-        {
-            using var qrCodeData = _qrGenerator.CreateQrCode(url, QRCodeGenerator.ECCLevel.Q);
-            using var qrCode = new PngByteQRCode(qrCodeData);
-            
-            return qrCode.GetGraphic(20);
-        }
-        catch (Exception ex)
-        {
-            throw new Exception($"An error occurred while generating the QR code: {ex.Message}", ex);
-        }
+        QRCodeData qrCodeData = _qrGenerator.CreateQrCode(url, QRCodeGenerator.ECCLevel.Q);
+        var qrCode = new PngByteQRCode(qrCodeData);
+        return qrCode.GetGraphic(20);
     }
-
-
 }

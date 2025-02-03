@@ -1,7 +1,6 @@
 using QrGenerator.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using QrGenerator.Repositories;
 
 namespace QrGenerator.Repositories;
 
@@ -21,9 +20,16 @@ public class UserRepository : IUserRepository
         return createUser.Entity;
     }
 
-    public async Task<ActionResult<User>> GetOne(string id)
+    public async Task<ActionResult<User>> GetOne(string email)
     {
-        return await _userContext.User.FirstOrDefaultAsync(user => user.Id == id);
+        var user = await _userContext.User.FirstOrDefaultAsync(user => user.Email == email);
+        return user is null ? new NotFoundResult() : new ActionResult<User>(user);
     }
-    
+
+    public async Task<User> Update(User user)
+    {
+        _userContext.User.Update(user);
+        await _userContext.SaveChangesAsync();
+        return user;
+    }
 }

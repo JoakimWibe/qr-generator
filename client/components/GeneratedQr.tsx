@@ -1,29 +1,26 @@
 "use client"
 
-import { useQrCodeStore } from '@/context/useQrCodeStore';
 import Image from 'next/image';
 import { Button } from './ui/button';
+import { useQrContext } from '@/context/QrContext';
 
 const GeneratedQr = () => {
-  const { imageUrl, setImageUrl } = useQrCodeStore();
+  const { generatedImageUrl, setGeneratedImageUrl } = useQrContext();
 
   const handleDiscardQr = () => {
-    setImageUrl(null)
-  }
-
-  const handleSaveQr = () => {
-     console.log("Saved!", imageUrl)
+    setGeneratedImageUrl(null)
   }
   
   return (
     <>
-         {imageUrl && (
+         {generatedImageUrl && (
+          <>
               <div>
-                <Image width={200} height={200} src={imageUrl} alt="Generated QR Code" />
+                <Image width={200} height={200} src={generatedImageUrl} alt="Generated QR Code" />
                 <Button onClick={handleDiscardQr}>Discard</Button>
-                <Button onClick={handleSaveQr}>Save</Button>
               </div>
-            )}
+          </>
+          )}
     </>
   )
 }
