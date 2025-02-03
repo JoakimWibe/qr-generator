@@ -16,6 +16,7 @@ const isProduction = process.env.NODE_ENV === 'production'
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [GitHub, Google],
+  debug: true, // Enable NextAuth debugging
   cookies: {
     sessionToken: {
       name: isProduction ? '__Secure-next-auth.session-token' : 'next-auth.session-token',
@@ -28,18 +29,25 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }
   },
   callbacks: {
-    async jwt({ token, account }) {
-      console.log('JWT Callback - Token before:', { 
-        hasToken: !!token.token,
-        tokenKeys: Object.keys(token)
+    async signIn({ user, account }) {
+      console.log('SignIn callback:', { 
+        provider: account?.provider,
+        email: user?.email 
+      });
+      return true;
+    },
+    async jwt({ token, account, trigger }) {
+      console.log('JWT callback triggered:', { 
+        trigger,
+        isFirstTime: !!account,
+        email: token.email 
       });
 
+      // Only make the login request on initial sign in
       if (account) {
         try {
-          const loginUrl = `${process.env.NEXT_PUBLIC_API_URL}/users/login`;
-          console.log('Attempting login:', loginUrl);
-          
-          const response = await fetch(loginUrl, {
+          console.log('Making backend login request...');
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/login`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -52,46 +60,32 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           });
 
           if (!response.ok) {
-            console.error('Login response not OK:', response.status);
             throw new Error('Failed to authenticate with backend');
           }
 
           const data: BackendAuthResponse = await response.json();
-          console.log('Backend auth successful:', { 
-            hasBackendToken: !!data.token,
-            userId: data.user.id 
-          });
+          console.log('Backend login successful');
           
-          token.token = data.token;
-          token.id = data.user.id;
+          // Store these explicitly
+          token.backendToken = data.token;
+          token.userId = data.user.id;
         } catch (error) {
           console.error('Failed to authenticate with backend:', error)
         }
       }
-
-      console.log('JWT Callback - Token after:', { 
-        hasToken: !!token.token,
-        tokenKeys: Object.keys(token)
-      });
-
-      return token
+      return token;
     },
     async session({ session, token }) {
-      console.log('Session Callback:', { 
-        hasInputToken: !!token.token,
-        tokenKeys: Object.keys(token),
-        sessionKeys: Object.keys(session)
+      console.log('Session callback:', {
+        hasBackendToken: !!token.backendToken,
+        hasUserId: !!token.userId
       });
-
-      session.token = token.token as string;
-      session.user.id = token.id as string;
-
-      console.log('Session after update:', { 
-        hasToken: !!session.token,
-        userId: session.user.id
-      });
-
-      return session
+      
+      // Use the explicitly stored values
+      session.token = token.backendToken as string;
+      session.user.id = token.userId as string;
+      
+      return session;
     },
   }
 })
