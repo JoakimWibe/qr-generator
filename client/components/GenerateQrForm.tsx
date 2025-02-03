@@ -23,7 +23,7 @@ const formSchema = z.object({
 
 const GenerateQrForm = () => {
   const { setGeneratedImageUrl } = useQrContext();
-  const { loading, generateQrCode } = useQrGenerator(undefined);
+  const { loading, generateQrCode } = useQrGenerator();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
