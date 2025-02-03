@@ -3,9 +3,9 @@
 import Image from 'next/image';
 import { Button } from './ui/button';
 import { Download, Trash2 } from 'lucide-react';
-import axios from 'axios';
 import { Input } from './ui/input';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 interface QrCodePreviewProps {
   imageUrl: string;
@@ -20,17 +20,15 @@ const QrCodePreview = ({
 
   const handleDownload = async () => {
     try {
-      const response = await axios.get(imageUrl, { responseType: 'blob' });
-      const downloadUrl = window.URL.createObjectURL(response.data);
       const link = document.createElement('a');
-      link.href = downloadUrl;
+      link.href = imageUrl;
       link.download = `${title || 'qr-code'}.png`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      window.URL.revokeObjectURL(downloadUrl);
     } catch (error) {
       console.error('Failed to download QR code:', error);
+      toast.error('Failed to download QR code');
     }
   };
 
