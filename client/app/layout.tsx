@@ -1,24 +1,24 @@
-import type { Metadata } from "next";
+import type { Metadata } from 'next'
 import "./globals.css";
 import Navbar from '@/components/Navbar';
 import Providers from '@/components/providers';
 import { Toaster } from "@/components/ui/sonner";
-import { SessionProvider } from 'next-auth/react'
+import AuthProvider from '@/components/AuthProvider';
 
 export const metadata: Metadata = {
   title: "QR Generator",
-  description: "An app to generate custom QR codes",
-};
+  description: "Generate QR codes for your links",
+}
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <SessionProvider>
+        <AuthProvider>
           <Providers>
             <main className='h-screen'>
               <Navbar />
@@ -26,7 +26,7 @@ export default function RootLayout({
             </main>
             <Toaster />
           </Providers>
-        </SessionProvider>
+        </AuthProvider>
       </body>
     </html>
   );

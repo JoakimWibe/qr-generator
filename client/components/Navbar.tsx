@@ -1,6 +1,6 @@
 'use client';
 
-import { signIn, signOut } from '@/auth';
+import { signIn, signOut } from 'next-auth/react';
 import Link from 'next/link';
 import {
     DropdownMenu,
