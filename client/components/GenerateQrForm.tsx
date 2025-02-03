@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { useQrContext } from '@/context/QrContext';
-import { useQrGenerator } from '@/hooks/useQrGenerator';
 import { Loader2 } from 'lucide-react';
 
 const formSchema = z.object({
@@ -22,8 +21,7 @@ const formSchema = z.object({
 })
 
 const GenerateQrForm = () => {
-  const { setGeneratedImageUrl } = useQrContext();
-  const { loading, generateQrCode } = useQrGenerator();
+  const { loading, generateQrCode } = useQrContext();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -33,11 +31,8 @@ const GenerateQrForm = () => {
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const imageUrl = await generateQrCode(values.url);
-    if (imageUrl) {
-      setGeneratedImageUrl(imageUrl);
-      form.reset();
-    }
+    await generateQrCode(values.url);
+    form.reset();
   }
 
   return (
@@ -50,22 +45,13 @@ const GenerateQrForm = () => {
             <FormItem>
               <FormLabel className="text-base">Website URL</FormLabel>
               <FormControl>
-                <Input 
-                  placeholder="https://example.com" 
-                  className="w-full" 
-                  {...field}
-                  disabled={loading}
-                />
+                <Input placeholder="https://example.com" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button 
-          type="submit" 
-          className="w-full" 
-          disabled={loading}
-        >
+        <Button type="submit" disabled={loading}>
           {loading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -77,7 +63,7 @@ const GenerateQrForm = () => {
         </Button>
       </form>
     </Form>
-  )
-}
+  );
+};
 
 export default GenerateQrForm
