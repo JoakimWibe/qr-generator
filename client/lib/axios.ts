@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getSession } from 'next-auth/react';
+
 
 export const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -16,14 +16,4 @@ export const createAuthenticatedApi = (token: string) => {
       'Content-Type': 'application/json',
     },
   });
-};
-
-export const serverApi = api;
-
-export const clientApi = async () => {
-  const session = await getSession();
-  if (session?.token) {
-    return createAuthenticatedApi(session.token);
-  }
-  return api;
 };

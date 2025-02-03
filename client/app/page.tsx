@@ -10,10 +10,11 @@ export default function Home() {
           <p className="text-muted-foreground">Generate custom QR codes for your URLs instantly</p>
         </div>
 
-        <div className="grid gap-8 md:grid-cols-2 items-start">
+        <div className="flex flex-col gap-8">
           <div className="rounded-lg border bg-card p-6">
             <GenerateQrForm />
           </div>
+
           <GeneratedQr />
         </div>
       </div>

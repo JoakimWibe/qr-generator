@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from '@/components/Navbar';
 import Providers from '@/components/providers';
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "QR Generator",
@@ -21,6 +22,7 @@ export default function RootLayout({
             <Navbar />
             {children}
           </main>
+          <Toaster />
         </Providers>
       </body>
     </html>

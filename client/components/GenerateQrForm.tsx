@@ -14,14 +14,16 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { useQrContext } from '@/context/QrContext';
-import { api } from "@/lib/axios"
+import { useQrGenerator } from '@/hooks/useQrGenerator';
+import { Loader2 } from 'lucide-react';
 
 const formSchema = z.object({
   url: z.string().url("Please provide a valid URL"),
 })
 
 const GenerateQrForm = () => {
-  const {setGeneratedImageUrl} = useQrContext();
+  const { setGeneratedImageUrl } = useQrContext();
+  const { loading, generateQrCode } = useQrGenerator(undefined);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -31,18 +33,10 @@ const GenerateQrForm = () => {
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    try {
-      const response = await api.post("/QrGenerator", {
-        url: values.url
-      }, {
-        responseType: "blob", 
-      })
-      
-      const imageUrl = URL.createObjectURL(response.data)
-      setGeneratedImageUrl(imageUrl)
-  
-    } catch (error) {
-      console.log(error)
+    const imageUrl = await generateQrCode(values.url);
+    if (imageUrl) {
+      setGeneratedImageUrl(imageUrl);
+      form.reset();
     }
   }
 
@@ -56,13 +50,31 @@ const GenerateQrForm = () => {
             <FormItem>
               <FormLabel className="text-base">Website URL</FormLabel>
               <FormControl>
-                <Input placeholder="https://example.com" className="w-full" {...field} />
+                <Input 
+                  placeholder="https://example.com" 
+                  className="w-full" 
+                  {...field}
+                  disabled={loading}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full">Generate QR Code</Button>
+        <Button 
+          type="submit" 
+          className="w-full" 
+          disabled={loading}
+        >
+          {loading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Generating...
+            </>
+          ) : (
+            'Generate QR Code'
+          )}
+        </Button>
       </form>
     </Form>
   )
