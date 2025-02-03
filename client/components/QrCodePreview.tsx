@@ -8,7 +8,6 @@ interface QrCodePreviewProps {
   imageUrl: string;
   title: string;
   onTitleChange: (title: string) => void;
-  onSave: () => void;
   onDiscard: () => void;
 }
 
@@ -16,7 +15,6 @@ const QrCodePreview = ({
   imageUrl,
   title,
   onTitleChange,
-  onSave,
   onDiscard
 }: QrCodePreviewProps) => {
   return (
@@ -43,13 +41,6 @@ const QrCodePreview = ({
             className="w-full"
           >
             Discard
-          </Button>
-          <Button 
-            onClick={onSave}
-            className="w-full"
-            disabled={!title.trim()}
-          >
-            Save
           </Button>
         </div>
       </div>

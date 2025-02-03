@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
 import "./globals.css";
 import Navbar from '@/components/Navbar';
-import Providers from '@/components/providers';
 import { Toaster } from "@/components/ui/sonner";
-import AuthProvider from '@/components/AuthProvider';
+import { ThemeProvider } from '@/components/theme-provider'
+import { QrProvider } from '@/context/QrContext'
 
 export const metadata: Metadata = {
   title: "QR Generator",
@@ -18,15 +18,20 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <AuthProvider>
-          <Providers>
+      <QrProvider>
+        <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
             <main className='h-screen'>
               <Navbar />
               {children}
             </main>
             <Toaster />
-          </Providers>
-        </AuthProvider>
+        </ThemeProvider>
+      </QrProvider>  
       </body>
     </html>
   );
