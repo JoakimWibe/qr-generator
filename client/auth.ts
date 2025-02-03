@@ -1,9 +1,8 @@
 import NextAuth from "next-auth"
 import GitHub from "next-auth/providers/github"
 import Google from "next-auth/providers/google"
-import { JWT } from "next-auth/jwt"
 
-interface BackendToken {
+interface BackendAuthResponse {
   token: string
   user: {
     id: string
@@ -16,10 +15,10 @@ interface BackendToken {
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [GitHub, Google],
   callbacks: {
-    async jwt({ token, user, account, profile }) {
-      if (account && profile) {
+    async jwt({ token, account }) {
+      if (account) {
         try {
-          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/Users/login`, {
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/login`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -28,33 +27,25 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               email: token.email,
               name: token.name,
               imageUrl: token.picture
-            }),
-          })
+            })
+          });
 
           if (!response.ok) {
-            throw new Error('Failed to authenticate with backend')
+            throw new Error('Failed to authenticate with backend');
           }
 
-          const backendToken: BackendToken = await response.json()
-          
-          return {
-            ...token,
-            backendToken: backendToken.token,
-            backendUser: backendToken.user
-          }
+          const data: BackendAuthResponse = await response.json();
+          token.token = data.token;
+          token.id = data.user.id;
         } catch (error) {
-          console.error('Authentication error:', error)
-          return token
+          console.error('Failed to authenticate with backend:', error)
         }
       }
-
       return token
     },
     async session({ session, token }) {
-      if (token.backendToken) {
-        session.backendToken = token.backendToken as string
-        session.user.id = (token.backendUser as any).id
-      }
+      session.token = token.token as string
+      session.user.id = token.id as string
       return session
     },
   }

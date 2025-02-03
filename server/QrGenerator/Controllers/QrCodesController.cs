@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using QrGenerator.Models;
 using QrGenerator.Repositories;
+using System.Security.Claims;
 
 namespace QrGenerator.Controllers
 {
@@ -20,7 +21,7 @@ namespace QrGenerator.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<QrCode>>> GetMyQrCodes()
         {
-            var userId = User.FindFirst("sub")?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
             {
                 return Unauthorized();
@@ -32,7 +33,7 @@ namespace QrGenerator.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<QrCode>> GetQrCode(string id)
         {
-            var userId = User.FindFirst("sub")?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
             {
                 return Unauthorized();
@@ -54,9 +55,9 @@ namespace QrGenerator.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<QrCode>> CreateQrCode(QrCodeRequest request)
+        public async Task<ActionResult<QrCode>> CreateQrCode([FromBody] QrCodeRequest request)
         {
-            var userId = User.FindFirst("sub")?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
             {
                 return Unauthorized();
@@ -81,7 +82,7 @@ namespace QrGenerator.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteQrCode(string id)
         {
-            var userId = User.FindFirst("sub")?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
             {
                 return Unauthorized();

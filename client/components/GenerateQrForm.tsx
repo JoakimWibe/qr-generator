@@ -1,7 +1,6 @@
 "use client"
 
 import { z } from "zod"
-import axios from "axios"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
@@ -15,6 +14,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { useQrContext } from '@/context/QrContext';
+import { api } from "@/lib/axios"
 
 const formSchema = z.object({
   url: z.string().url("Please provide a valid URL"),
@@ -32,7 +32,7 @@ const GenerateQrForm = () => {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const response = await axios.post(process.env.NEXT_PUBLIC_API_URL + "/QrGenerator", {
+      const response = await api.post("/QrGenerator", {
         url: values.url
       }, {
         responseType: "blob", 
@@ -40,7 +40,7 @@ const GenerateQrForm = () => {
       
       const imageUrl = URL.createObjectURL(response.data)
       setGeneratedImageUrl(imageUrl)
-
+  
     } catch (error) {
       console.log(error)
     }
