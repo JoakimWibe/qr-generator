@@ -8,7 +8,18 @@ import QrCodePreview from './QrCodePreview';
 
 const GeneratedQr = () => {
   const { generatedImageUrl, setGeneratedImageUrl } = useQrContext();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession({
+    required: true,
+    onUnauthenticated() {
+      console.log('Session not authenticated');
+    }
+  });
+  console.log('Session in GeneratedQr:', { 
+    status,
+    hasSession: !!session,
+    hasToken: !!session?.token,
+    token: session?.token 
+  });
   const [title, setTitle] = useState('');
   const { saveQrCode } = useQrGenerator(session?.token);
 

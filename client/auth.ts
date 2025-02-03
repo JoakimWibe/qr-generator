@@ -12,8 +12,21 @@ interface BackendAuthResponse {
   }
 }
 
+const isProduction = process.env.NODE_ENV === 'production'
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [GitHub, Google],
+  cookies: {
+    sessionToken: {
+      name: isProduction ? '__Secure-next-auth.session-token' : 'next-auth.session-token',
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: isProduction
+      }
+    }
+  },
   callbacks: {
     async jwt({ token, account }) {
       if (account) {
