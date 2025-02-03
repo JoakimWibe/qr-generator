@@ -1,16 +1,14 @@
 "use client"
 
 import { useQrContext } from '@/context/QrContext';
-import { useState } from 'react';
 import QrCodePreview from './QrCodePreview';
 
 const GeneratedQr = () => {
   const { generatedImageUrl, setGeneratedImageUrl } = useQrContext();
-  const [title, setTitle] = useState('');
+
 
   const handleDiscardQr = () => {
     setGeneratedImageUrl(null);
-    setTitle('');
   };
 
   
@@ -19,9 +17,6 @@ const GeneratedQr = () => {
       {generatedImageUrl ? (
         <QrCodePreview
           imageUrl={generatedImageUrl}
-          title={title}
-          onTitleChange={setTitle}
-  
           onDiscard={handleDiscardQr}
         />
       ) : (

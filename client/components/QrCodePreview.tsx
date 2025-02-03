@@ -2,19 +2,14 @@
 
 import Image from 'next/image';
 import { Button } from './ui/button';
-import { Input } from './ui/input';
 
 interface QrCodePreviewProps {
   imageUrl: string;
-  title: string;
-  onTitleChange: (title: string) => void;
   onDiscard: () => void;
 }
 
 const QrCodePreview = ({
   imageUrl,
-  title,
-  onTitleChange,
   onDiscard
 }: QrCodePreviewProps) => {
   return (
@@ -28,12 +23,6 @@ const QrCodePreview = ({
         />
       </div>
       <div className="space-y-4">
-        <Input
-          type="text"
-          placeholder="Enter title for your QR code"
-          value={title}
-          onChange={(e) => onTitleChange(e.target.value)}
-        />
         <div className="flex gap-2">
           <Button 
             variant="outline" 
