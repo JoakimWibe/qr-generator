@@ -7,14 +7,22 @@ const GeneratedQr = () => {
   const { generatedImageUrl, clearQrCode } = useQrContext();
 
   if (!generatedImageUrl) {
-    return null;
+    return (
+      <div className="rounded-lg border bg-card p-6 min-h-[200px] flex items-center justify-center">
+        <p className="text-muted-foreground">
+          Your QR code will appear here
+        </p>
+      </div>
+    );
   }
 
   return (
-    <QrCodePreview
-      imageUrl={generatedImageUrl}
-      onDiscard={clearQrCode}
-    />
+    <div className="rounded-lg border bg-card p-6 min-h-[200px] flex items-center justify-center">
+      <QrCodePreview
+        imageUrl={generatedImageUrl}
+        onDiscard={clearQrCode}
+      />
+    </div>
   );
 };
 
