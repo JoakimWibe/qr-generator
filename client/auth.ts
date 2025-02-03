@@ -30,11 +30,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               email: token.email,
               name: token.name,
               imageUrl: token.picture
-            })
+            }),
+            cache: 'no-store'  // Ensure fresh request
           });
 
           if (!response.ok) {
-            throw new Error('Failed to authenticate with backend');
+            console.error('Backend auth failed:', response.status);
+            return token;  // Return token even if backend fails
           }
 
           const data: BackendAuthResponse = await response.json();
@@ -44,11 +46,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             userId: data.user.id
           }
         } catch (error) {
-          console.error('Failed to authenticate with backend:', error)
-          return token
+          console.error('Failed to authenticate with backend:', error);
+          return token;  // Return token even if backend fails
         }
       }
-      return token
+      return token;
     },
     async session({ session, token }) {
       if (token?.backendToken && typeof token.backendToken === 'string') {
@@ -58,6 +60,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.id = token.userId;
       }
       return session;
-    },
+    }
   }
 })
