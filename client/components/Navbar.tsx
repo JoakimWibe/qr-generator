@@ -41,11 +41,6 @@ const Navbar = async () => {
                                 </DropdownMenuLabel>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem>
-                                    <Link href={`/user/${session?.user?.id}`}>
-                                        My Account
-                                    </Link>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
                                     <Link href={`/saved-qr-codes`}>
                                         Saved QR codes
                                     </Link>
