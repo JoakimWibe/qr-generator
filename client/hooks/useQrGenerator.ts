@@ -23,6 +23,8 @@ export const useQrGenerator = (token: string | undefined) => {
   };
 
   const saveQrCode = async (title: string, imageUrl: string) => {
+    console.log('Token received:', token); // Debug token
+
     if (!token) {
       toast.error('Please sign in to save QR codes');
       return false;
@@ -43,15 +45,19 @@ export const useQrGenerator = (token: string | undefined) => {
       });
 
       const api = createAuthenticatedApi(token);
-      await api.post('/QrCodes', {
+      console.log('Making request with headers:', api.defaults.headers); // Debug headers
+
+      const response2 = await api.post('/QrCodes', {
         title: title.trim(),
         url: base64Url
       });
+      
+      console.log('Save response:', response2); // Debug response
 
       toast.success("QR code saved successfully");
       return true;
-    } catch (error) {
-      console.error('Failed to save QR code:', error);
+    } catch (error: any) {
+      console.error('Failed to save QR code:', error.response || error); // Enhanced error logging
       toast.error("Failed to save QR code");
       return false;
     }
