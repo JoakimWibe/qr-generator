@@ -31,10 +31,19 @@ const GeneratedQr = () => {
     }
 
     try {
+      const response = await fetch(generatedImageUrl!);
+      const blob = await response.blob();
+      const reader = new FileReader();
+      
+      const base64Url = await new Promise<string>((resolve) => {
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.readAsDataURL(blob);
+      });
+
       const api = createAuthenticatedApi(session.token);
       await api.post('/QrCodes', {
         title: title.trim(),
-        url: generatedImageUrl
+        url: base64Url
       });
 
       setGeneratedImageUrl(null);
