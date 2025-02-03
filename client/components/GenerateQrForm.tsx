@@ -30,11 +30,11 @@ const GenerateQrForm = () => {
     },
   })
 
-
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const response = await axios.get(process.env.NEXT_PUBLIC_QRGEN_URL + "/Qr/generate" || "", {
-        params: { Url: values.url },
+      const response = await axios.post(process.env.NEXT_PUBLIC_API_URL + "/QrGenerator", {
+        url: values.url
+      }, {
         responseType: "blob", 
       })
       
@@ -48,21 +48,21 @@ const GenerateQrForm = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <FormField
           control={form.control}
           name="url"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>URL</FormLabel>
+              <FormLabel className="text-base">Website URL</FormLabel>
               <FormControl>
-                <Input placeholder="https://example.com" {...field} />
+                <Input placeholder="https://example.com" className="w-full" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit">Generate</Button>
+        <Button type="submit" className="w-full">Generate QR Code</Button>
       </form>
     </Form>
   )
