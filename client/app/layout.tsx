@@ -3,6 +3,7 @@ import "./globals.css";
 import Navbar from '@/components/Navbar';
 import Providers from '@/components/providers';
 import { Toaster } from "@/components/ui/sonner";
+import { SessionProvider } from 'next-auth/react'
 
 export const metadata: Metadata = {
   title: "QR Generator",
@@ -11,19 +12,21 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: {
+  children: React.ReactNode
+}) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <Providers>
-          <main className='h-screen'>
-            <Navbar />
-            {children}
-          </main>
-          <Toaster />
-        </Providers>
+        <SessionProvider>
+          <Providers>
+            <main className='h-screen'>
+              <Navbar />
+              {children}
+            </main>
+            <Toaster />
+          </Providers>
+        </SessionProvider>
       </body>
     </html>
   );

@@ -1,4 +1,6 @@
-import { auth, signIn, signOut } from '@/auth';
+'use client';
+
+import { signIn, signOut } from '@/auth';
 import Link from 'next/link';
 import {
     DropdownMenu,
@@ -13,9 +15,10 @@ import { FaGoogle, FaGithub } from "react-icons/fa";
 import { Avatar, AvatarImage } from "@/components/ui/avatar"
 import { ModeToggle } from './ui/ModeToggle';
 import { Button } from './ui/button';
+import { useSession } from 'next-auth/react';
 
-const Navbar = async () => { 
-  const session = await auth();
+const Navbar = () => { 
+  const { data: session } = useSession();
   
   return (
     <header className='px-5 py-3 shadow-sm'>
@@ -24,7 +27,7 @@ const Navbar = async () => {
 
             <div className='flex items-center gap-5'>
                 <ModeToggle />    
-                {session && session?.expires ? (
+                {session ? (
                     <>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
@@ -45,16 +48,14 @@ const Navbar = async () => {
                                         Saved QR codes
                                     </Link>
                                 </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <form action={async () => {
-                                        'use server'
-                                        await signOut()
-                                    }}>
-                                        <button className='w-full flex items-center gap-2'>
+                                <DropdownMenuItem asChild>
+                                    <button 
+                                        onClick={() => signOut()}
+                                        className='w-full flex items-center gap-2'
+                                    >
                                         <LogOut className="h-5 w-5 theme-icon" />
                                         Sign Out
                                     </button>
-                                    </form>
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
