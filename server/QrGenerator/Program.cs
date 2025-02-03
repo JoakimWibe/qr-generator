@@ -41,7 +41,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowLocalhost3000",
         policy => policy
-            .SetIsOriginAllowed(_ => true) // Be careful! Only use this for debugging
+            .WithOrigins(
+                "http://localhost:3000",
+                "https://jmw-qr-generator.vercel.app"
+            )
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials());
