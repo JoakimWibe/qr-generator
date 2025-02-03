@@ -1,27 +1,14 @@
 "use client"
 
 import { useQrContext } from '@/context/QrContext';
-import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { useQrGenerator } from '@/hooks/useQrGenerator';
 import QrCodePreview from './QrCodePreview';
 
 const GeneratedQr = () => {
   const { generatedImageUrl, setGeneratedImageUrl } = useQrContext();
-  const { data: session, status } = useSession({
-    required: true,
-    onUnauthenticated() {
-      console.log('Session not authenticated');
-    }
-  });
-  console.log('Session in GeneratedQr:', { 
-    status,
-    hasSession: !!session,
-    hasToken: !!session?.token,
-    token: session?.token 
-  });
   const [title, setTitle] = useState('');
-  const { saveQrCode } = useQrGenerator(session?.token);
+  const { saveQrCode } = useQrGenerator();
 
   const handleDiscardQr = () => {
     setGeneratedImageUrl(null);

@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import { api, createAuthenticatedApi } from '@/lib/axios';
+import { api, authenticatedApi } from '@/lib/axios';
 import { toast } from 'sonner';
+import { useSession } from 'next-auth/react';
 
-export const useQrGenerator = (token: string | undefined) => {
+export const useQrGenerator = () => {
   const [loading, setLoading] = useState(false);
+  const { status } = useSession();
 
   const generateQrCode = async (url: string) => {
     setLoading(true);
@@ -23,7 +25,7 @@ export const useQrGenerator = (token: string | undefined) => {
   };
 
   const saveQrCode = async (title: string, imageUrl: string) => {
-    if (!token) {
+    if (status !== 'authenticated') {
       toast.error('Please sign in to save QR codes');
       return false;
     }
@@ -42,9 +44,7 @@ export const useQrGenerator = (token: string | undefined) => {
         reader.readAsDataURL(blob);
       });
 
-      const api = createAuthenticatedApi(token);
-
-     await api.post('/QrCodes', {
+      await authenticatedApi.post('/QrCodes', {
         title: title.trim(),
         url: base64Url
       });

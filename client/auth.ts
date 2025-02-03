@@ -12,41 +12,12 @@ interface BackendAuthResponse {
   }
 }
 
-const isProduction = process.env.NODE_ENV === 'production'
-
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [GitHub, Google],
-  debug: true, // Enable NextAuth debugging
-  cookies: {
-    sessionToken: {
-      name: isProduction ? '__Secure-next-auth.session-token' : 'next-auth.session-token',
-      options: {
-        httpOnly: true,
-        sameSite: 'lax',
-        path: '/',
-        secure: isProduction
-      }
-    }
-  },
   callbacks: {
-    async signIn({ user, account }) {
-      console.log('SignIn callback:', { 
-        provider: account?.provider,
-        email: user?.email 
-      });
-      return true;
-    },
-    async jwt({ token, account, trigger }) {
-      console.log('JWT callback triggered:', { 
-        trigger,
-        isFirstTime: !!account,
-        email: token.email 
-      });
-
-      // Only make the login request on initial sign in
+    async jwt({ token, account }) {
       if (account) {
         try {
-          console.log('Making backend login request...');
           const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/login`, {
             method: 'POST',
             headers: {
@@ -64,28 +35,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           }
 
           const data: BackendAuthResponse = await response.json();
-          console.log('Backend login successful');
           
-          // Store these explicitly
-          token.backendToken = data.token;
-          token.userId = data.user.id;
+          token.accessToken = data.token;
+          token.id = data.user.id;
         } catch (error) {
           console.error('Failed to authenticate with backend:', error)
         }
       }
-      return token;
+      return token
     },
     async session({ session, token }) {
-      console.log('Session callback:', {
-        hasBackendToken: !!token.backendToken,
-        hasUserId: !!token.userId
-      });
-      
-      // Use the explicitly stored values
-      session.token = token.backendToken as string;
-      session.user.id = token.userId as string;
-      
-      return session;
+      session.token = token.accessToken as string;
+      session.user.id = token.id as string;
+      return session
     },
   }
 })
