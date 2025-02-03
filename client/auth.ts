@@ -14,6 +14,9 @@ interface BackendAuthResponse {
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [GitHub, Google],
+  session: {
+    strategy: "jwt"
+  },
   callbacks: {
     async jwt({ token, account }) {
       if (account) {
@@ -35,18 +38,26 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           }
 
           const data: BackendAuthResponse = await response.json();
-          token.token = data.token;
-          token.id = data.user.id;
+          return {
+            ...token,
+            backendToken: data.token,
+            userId: data.user.id
+          }
         } catch (error) {
           console.error('Failed to authenticate with backend:', error)
+          return token
         }
       }
       return token
     },
     async session({ session, token }) {
-      session.token = token.token as string
-      session.user.id = token.id as string
-      return session
+      if (token?.backendToken && typeof token.backendToken === 'string') {
+        session.token = token.backendToken;
+      }
+      if (token?.userId && typeof token.userId === 'string') {
+        session.user.id = token.userId;
+      }
+      return session;
     },
   }
 })
