@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using QrGenerator.Models;
-using QrGenerator.Repositories;
+using QRCoder;
 
 namespace QrGenerator.Controllers
 {
@@ -8,11 +8,11 @@ namespace QrGenerator.Controllers
     [ApiController]
     public class QrGeneratorController : ControllerBase
     {
-        private readonly IQrCodeRepository _qrCodeRepository;
+        private readonly QRCodeGenerator _qrGenerator;
 
-        public QrGeneratorController(IQrCodeRepository qrCodeRepository)
+        public QrGeneratorController()
         {
-            _qrCodeRepository = qrCodeRepository;
+            _qrGenerator = new QRCodeGenerator();
         }
 
         [HttpPost]
@@ -23,7 +23,9 @@ namespace QrGenerator.Controllers
                 return BadRequest("URL is required");
             }
 
-            var qrCodeImage = _qrCodeRepository.GenerateQrCode(request.Url);
+            QRCodeData qrCodeData = _qrGenerator.CreateQrCode(request.Url, QRCodeGenerator.ECCLevel.Q);
+            var qrCode = new PngByteQRCode(qrCodeData);
+            var qrCodeImage = qrCode.GetGraphic(20);
             return File(qrCodeImage, "image/png");
         }
     }
