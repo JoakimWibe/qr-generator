@@ -69,27 +69,23 @@ const Navbar = async () => {
                         <DropdownMenuContent>
                             <DropdownMenuLabel>Sign In</DropdownMenuLabel>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem>
-                                <form action={async () => {
-                                    'use server'
-                                    await signIn('google')
-                                }} className='w-full'>
-                                    <button className='w-full flex items-center gap-2'>
+                            <DropdownMenuItem asChild>
+                                <button 
+                                    onClick={() => signIn('google')}
+                                    className='w-full flex items-center gap-2'
+                                >
                                     <FaGoogle className="h-5 w-5 theme-icon" />
                                     Sign in with Google
                                 </button>
-                                </form>
                             </DropdownMenuItem>
-                            <DropdownMenuItem>
-                                <form action={async () => {
-                                    'use server'
-                                    await signIn('github')
-                                }} className='w-full'>
-                                    <button className='w-full flex items-center gap-2'>
+                            <DropdownMenuItem asChild>
+                                <button 
+                                    onClick={() => signIn('github')}
+                                    className='w-full flex items-center gap-2'
+                                >
                                     <FaGithub className="h-5 w-5 theme-icon" />
                                     Sign in with Github
                                 </button>
-                                </form>
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
