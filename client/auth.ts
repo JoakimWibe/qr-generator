@@ -35,8 +35,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           }
 
           const data: BackendAuthResponse = await response.json();
-          
-          token.accessToken = data.token;
+          token.token = data.token;
           token.id = data.user.id;
         } catch (error) {
           console.error('Failed to authenticate with backend:', error)
@@ -45,8 +44,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return token
     },
     async session({ session, token }) {
-      session.token = token.accessToken as string;
-      session.user.id = token.id as string;
+      session.token = token.token as string
+      session.user.id = token.id as string
       return session
     },
   }

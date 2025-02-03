@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 using QrGenerator.Models;
 using QrGenerator.Repositories;
 using QrGenerator.Services;
@@ -52,7 +53,7 @@ namespace QrGenerator.Controllers
         [HttpGet("me")]
         public async Task<ActionResult<User>> GetCurrentUser()
         {
-            var email = User.FindFirst("email")?.Value;
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
             if (string.IsNullOrEmpty(email))
             {
                 return Unauthorized();
@@ -71,7 +72,7 @@ namespace QrGenerator.Controllers
         [HttpPut("me")]
         public async Task<ActionResult<User>> UpdateCurrentUser(UserRequest request)
         {
-            var email = User.FindFirst("email")?.Value;
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
             if (string.IsNullOrEmpty(email))
             {
                 return Unauthorized();

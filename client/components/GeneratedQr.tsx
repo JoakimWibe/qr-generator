@@ -1,14 +1,16 @@
 "use client"
 
 import { useQrContext } from '@/context/QrContext';
+import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { useQrGenerator } from '@/hooks/useQrGenerator';
 import QrCodePreview from './QrCodePreview';
 
 const GeneratedQr = () => {
   const { generatedImageUrl, setGeneratedImageUrl } = useQrContext();
+  const { data: session } = useSession();
   const [title, setTitle] = useState('');
-  const { saveQrCode } = useQrGenerator();
+  const { saveQrCode } = useQrGenerator(session?.token);
 
   const handleDiscardQr = () => {
     setGeneratedImageUrl(null);
